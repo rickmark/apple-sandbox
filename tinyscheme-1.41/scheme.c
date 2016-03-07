@@ -15,17 +15,18 @@
  */
 
 #define _SCHEME_SOURCE
+#include "scheme.h"
 #include "scheme-private.h"
+
 #ifndef WIN32
 # include <unistd.h>
 #endif
 #ifdef WIN32
 # include <io.h> /* access */
 # include <sys/types.h> /* off_t */
-
 #define snprintf _snprintf
-
 #endif
+
 #if USE_DL
 # include "dynload.h"
 #endif
@@ -68,9 +69,6 @@
 /*
  *  Basic memory allocation units
  */
-
-#define banner "TinyScheme 1.41"
-
 #include <string.h>
 #include <stdlib.h>
 
@@ -104,10 +102,6 @@ static const char *strlwr(char *s) {
 
 #ifndef prompt
 # define prompt "ts> "
-#endif
-
-#ifndef InitFile
-# define InitFile "init.scm"
 #endif
 
 #ifndef FIRST_CELLSEGS
@@ -1412,7 +1406,7 @@ static port *port_rep_from_file(scheme *sc, FILE *f, int prop)
 {
     port *pt;
 
-    pt = (port *)sc->malloc(sizeof *pt);
+    pt = (port *)sc->malloc(sizeof(port));
     if (pt == NULL) {
         return NULL;
     }
@@ -4543,13 +4537,14 @@ static int syntaxnum(pointer p) {
 }
 
 /* initialization of TinyScheme */
-#if USE_INTERFACE
 INTERFACE static pointer s_cons(scheme *sc, pointer a, pointer b) {
  return cons(sc,a,b);
 }
 INTERFACE static pointer s_immutable_cons(scheme *sc, pointer a, pointer b) {
  return immutable_cons(sc,a,b);
 }
+
+#if USE_INTERFACE
 
 static struct scheme_interface vtbl ={
   scheme_define,
@@ -4613,12 +4608,16 @@ static struct scheme_interface vtbl ={
   scheme_load_file,
   scheme_load_string
 };
+
+void scheme_init_interface(scheme_interface *sci) {
+  *sci = vtbl;
+}
+
 #endif
 
 scheme *scheme_init_new() {
-  scheme *sc=(scheme*)malloc(sizeof(scheme));
-  if(!scheme_init(sc)) {
-    free(sc);
+  scheme *sc;
+  if(!scheme_init(&sc)) {
     return 0;
   } else {
     return sc;
@@ -4626,9 +4625,8 @@ scheme *scheme_init_new() {
 }
 
 scheme *scheme_init_new_custom_alloc(func_alloc malloc, func_dealloc free) {
-  scheme *sc=(scheme*)malloc(sizeof(scheme));
-  if(!scheme_init_custom_alloc(sc,malloc,free)) {
-    free(sc);
+  scheme *sc;
+  if(!scheme_init_custom_alloc(&sc,malloc,free)) {
     return 0;
   } else {
     return sc;
@@ -4636,11 +4634,21 @@ scheme *scheme_init_new_custom_alloc(func_alloc malloc, func_dealloc free) {
 }
 
 
-int scheme_init(scheme *sc) {
+int scheme_init(scheme **sc) {
  return scheme_init_custom_alloc(sc,malloc,free);
 }
 
-int scheme_init_custom_alloc(scheme *sc, func_alloc malloc, func_dealloc free) {
+int scheme_init_custom_alloc(scheme **_sc, func_alloc malloc, func_dealloc free) {
+  scheme *sc = malloc(sizeof(scheme));
+  if (sc == NULL) {
+    *_sc = 0;
+    return 0;
+  }
+  
+  *_sc = sc;
+
+  sc = *_sc;
+
   int i, n=sizeof(dispatch_table)/sizeof(dispatch_table[0]);
   pointer x;
 
@@ -4742,11 +4750,11 @@ int scheme_init_custom_alloc(scheme *sc, func_alloc malloc, func_dealloc free) {
 }
 
 void scheme_set_input_port_file(scheme *sc, FILE *fin) {
-  sc->inport=port_from_file(sc,fin,port_input);
+  sc->inport = port_from_file(sc,fin,port_input);
 }
 
 void scheme_set_input_port_string(scheme *sc, char *start, char *past_the_end) {
-  sc->inport=port_from_string(sc,start,past_the_end,port_input);
+  sc->inport = port_from_string(sc,start,past_the_end,port_input);
 }
 
 void scheme_set_output_port_file(scheme *sc, FILE *fout) {
@@ -4867,7 +4875,28 @@ void scheme_define(scheme *sc, pointer envir, pointer symbol, pointer value) {
      }
 }
 
-#if !STANDALONE
+int scheme_retcode(scheme *sc) {
+  return sc->retcode;
+}
+
+pointer scheme_global_env(scheme *sc) {
+  return sc->global_env;
+}
+
+pointer scheme_nil(scheme *sc) {
+  return sc->NIL;
+}
+
+pointer scheme_true(scheme *sc) {
+  return sc->T;
+}
+
+pointer scheme_false(scheme *sc) {
+  return sc->F;
+}
+
+
+
 void scheme_register_foreign_func(scheme * sc, scheme_registerable * sr)
 {
   scheme_define(sc,
@@ -4943,115 +4972,10 @@ pointer scheme_eval(scheme *sc, pointer obj)
   return sc->value;
 }
 
-
-#endif
-
-/* ========== Main ========== */
-
-#if STANDALONE
-
-#if defined(__APPLE__) && !defined (OSX)
-int main()
-{
-     extern MacTS_main(int argc, char **argv);
-     char**    argv;
-     int argc = ccommand(&argv);
-     MacTS_main(argc,argv);
-     return 0;
-}
-int MacTS_main(int argc, char **argv) {
-#else
-int main(int argc, char **argv) {
-#endif
-  scheme sc;
-  FILE *fin;
-  char *file_name=InitFile;
-  int retcode;
-  int isfile=1;
-
-  if(argc==1) {
-    printf(banner);
-  }
-  if(argc==2 && strcmp(argv[1],"-?")==0) {
-    printf("Usage: tinyscheme -?\n");
-    printf("or:    tinyscheme [<file1> <file2> ...]\n");
-    printf("followed by\n");
-    printf("          -1 <file> [<arg1> <arg2> ...]\n");
-    printf("          -c <Scheme commands> [<arg1> <arg2> ...]\n");
-    printf("assuming that the executable is named tinyscheme.\n");
-    printf("Use - as filename for stdin.\n");
-    return 1;
-  }
-  if(!scheme_init(&sc)) {
-    fprintf(stderr,"Could not initialize!\n");
-    return 2;
-  }
-  scheme_set_input_port_file(&sc, stdin);
-  scheme_set_output_port_file(&sc, stdout);
-#if USE_DL
-  scheme_define(&sc,sc.global_env,mk_symbol(&sc,"load-extension"),mk_foreign_func(&sc, scm_load_ext));
-#endif
-  argv++;
-  if(access(file_name,0)!=0) {
-    char *p=getenv("TINYSCHEMEINIT");
-    if(p!=0) {
-      file_name=p;
-    }
-  }
-  do {
-    if(strcmp(file_name,"-")==0) {
-      fin=stdin;
-    } else if(strcmp(file_name,"-1")==0 || strcmp(file_name,"-c")==0) {
-      pointer args=sc.NIL;
-      isfile=file_name[1]=='1';
-      file_name=*argv++;
-      if(strcmp(file_name,"-")==0) {
-        fin=stdin;
-      } else if(isfile) {
-        fin=fopen(file_name,"r");
-      }
-      for(;*argv;argv++) {
-        pointer value=mk_string(&sc,*argv);
-        args=cons(&sc,value,args);
-      }
-      args=reverse_in_place(&sc,sc.NIL,args);
-      scheme_define(&sc,sc.global_env,mk_symbol(&sc,"*args*"),args);
-
-    } else {
-      fin=fopen(file_name,"r");
-    }
-    if(isfile && fin==0) {
-      fprintf(stderr,"Could not open file %s\n",file_name);
-    } else {
-      if(isfile) {
-        scheme_load_named_file(&sc,fin,file_name);
-      } else {
-        scheme_load_string(&sc,file_name);
-      }
-      if(!isfile || fin!=stdin) {
-        if(sc.retcode!=0) {
-          fprintf(stderr,"Errors encountered reading %s\n",file_name);
-        }
-        if(isfile) {
-          fclose(fin);
-        }
-      }
-    }
-    file_name=*argv++;
-  } while(file_name!=0);
-  if(argc==1) {
-    scheme_load_named_file(&sc,stdin,0);
-  }
-  retcode=sc.retcode;
-  scheme_deinit(&sc);
-
-  return retcode;
+pointer scheme_reverse(scheme *sc, pointer a) {
+  return reverse(sc, a);
 }
 
-#endif
-
-/*
-Local variables:
-c-file-style: "k&r"
-End:
-*/
+pointer scheme_reverse_in_place(scheme *sc, pointer term, pointer list) {
+  return reverse_in_place(sc, term, list);
+}
