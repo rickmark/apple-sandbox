@@ -4638,6 +4638,8 @@ int scheme_init(scheme **sc) {
 }
 
 int scheme_init_custom_alloc(scheme **_sc, func_alloc malloc, func_dealloc free) {
+  int i, n;
+  pointer x;
   scheme *sc = malloc(sizeof(scheme));
   if (sc == NULL) {
     *_sc = 0;
@@ -4648,8 +4650,7 @@ int scheme_init_custom_alloc(scheme **_sc, func_alloc malloc, func_dealloc free)
 
   sc = *_sc;
 
-  int i, n=sizeof(dispatch_table)/sizeof(dispatch_table[0]);
-  pointer x;
+  n=sizeof(dispatch_table)/sizeof(dispatch_table[0]);
 
   num_zero.is_fixnum=1;
   num_zero.value.ivalue=0;

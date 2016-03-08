@@ -222,5 +222,5 @@ int scheme_is_immutable(pointer p) {
 }
 
 void scheme_setimmutable(pointer p) {
-	return setimmutable(p);
+	setimmutable(p);
 }
