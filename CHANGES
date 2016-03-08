@@ -4,6 +4,8 @@ Change Log
 Version 1.50
     - extended the public API and properly namespaced everything
     - separated the main tinyscheme shell into a separate file
+    - made source compatible with Visual C++ (and consequently C89)
+    - added regex module and updated it to use the new API
 
 Version 1.41
     Bugs fixed:

@@ -226,10 +226,11 @@ int is_environment(pointer p);
 int is_immutable(pointer p);
 void setimmutable(pointer p);
 
-
 pointer reverse(scheme *sc, pointer a);
 pointer reverse_in_place(scheme *sc, pointer term, pointer list);
-
+void fill_vector(pointer vec, pointer obj);
+pointer vector_elem(pointer vec, int ielem);
+pointer set_vector_elem(pointer vec, int ielem, pointer a);
 
 #ifdef __cplusplus
 }

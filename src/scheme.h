@@ -120,16 +120,19 @@ SCHEME_EXPORT pointer scheme_global_env(scheme *sc);
 SCHEME_EXPORT pointer scheme_nil(scheme *sc);
 SCHEME_EXPORT pointer scheme_true(scheme *sc);
 SCHEME_EXPORT pointer scheme_false(scheme *sc);
+SCHEME_EXPORT void scheme_memory_error(scheme *sc);
 
 SCHEME_EXPORT pointer scheme_reverse(scheme *sc, pointer a);
 SCHEME_EXPORT pointer scheme_reverse_in_place(scheme *sc, pointer term, pointer list);
+SCHEME_EXPORT void scheme_fill_vector(pointer vec, pointer obj);
+SCHEME_EXPORT pointer scheme_vector_elem(pointer vec, int ielem);
+SCHEME_EXPORT pointer scheme_set_vector_elem(pointer vec, int ielem, pointer a);
+
 
 
 #define cons(sc,a,b) scheme_cons(sc,a,b,0)
 #define immutable_cons(sc,a,b) scheme_cons(sc,a,b,1)
 
-
-#if USE_INTERFACE
 
 struct scheme_interface {
   void (*scheme_define)(scheme *sc, pointer env, pointer symbol, pointer value);
@@ -197,8 +200,6 @@ struct scheme_interface {
 typedef struct scheme_interface scheme_interface;
 
 SCHEME_EXPORT void scheme_init_interface(scheme_interface *sci);
-
-#endif
 
 typedef struct scheme_registerable
 {

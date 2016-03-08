@@ -99,6 +99,7 @@ pointer scm_load_ext(scheme *sc, pointer args)
 
    if ((args != sc->NIL) && is_string((first_arg = pair_car(args)))) {
       name = string_value(first_arg);
+      printf("loading scheme extension %s\n", name);
       make_filename(name,filename);
       make_init_fn(name,init_fn);
       dll_handle = dl_attach(filename);
@@ -108,6 +109,7 @@ pointer scm_load_ext(scheme *sc, pointer args)
       else {
          module_init = (void(*)(scheme *))dl_proc(dll_handle, init_fn);
          if (module_init != 0) {
+            printf("found init function: executing\n");
             (*module_init)(sc);
             retval = sc -> T;
          }

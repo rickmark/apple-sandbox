@@ -173,9 +173,6 @@ INTERFACE INLINE int is_string(pointer p)     { return (type(p)==T_STRING); }
 
 INTERFACE static int is_list(scheme *sc, pointer p);
 INTERFACE INLINE int is_vector(pointer p)    { return (type(p)==T_VECTOR); }
-INTERFACE static void fill_vector(pointer vec, pointer obj);
-INTERFACE static pointer vector_elem(pointer vec, int ielem);
-INTERFACE static pointer set_vector_elem(pointer vec, int ielem, pointer a);
 INTERFACE INLINE int is_number(pointer p)    { return (type(p)==T_NUMBER); }
 INTERFACE INLINE int is_integer(pointer p) {
   if (!is_number(p))
@@ -1005,7 +1002,7 @@ INTERFACE pointer mk_empty_string(scheme *sc, int len, char fill) {
 INTERFACE static pointer mk_vector(scheme *sc, int len)
 { return get_vector_object(sc,len,sc->NIL); }
 
-INTERFACE static void fill_vector(pointer vec, pointer obj) {
+INTERFACE void fill_vector(pointer vec, pointer obj) {
      int i;
      int num=ivalue(vec)/2+ivalue(vec)%2;
      for(i=0; i<num; i++) {
@@ -1016,7 +1013,7 @@ INTERFACE static void fill_vector(pointer vec, pointer obj) {
      }
 }
 
-INTERFACE static pointer vector_elem(pointer vec, int ielem) {
+INTERFACE pointer vector_elem(pointer vec, int ielem) {
      int n=ielem/2;
      if(ielem%2==0) {
           return car(vec+1+n);
@@ -1025,7 +1022,7 @@ INTERFACE static pointer vector_elem(pointer vec, int ielem) {
      }
 }
 
-INTERFACE static pointer set_vector_elem(pointer vec, int ielem, pointer a) {
+INTERFACE pointer set_vector_elem(pointer vec, int ielem, pointer a) {
      int n=ielem/2;
      if(ielem%2==0) {
           return car(vec+1+n)=a;

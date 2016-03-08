@@ -224,3 +224,19 @@ int scheme_is_immutable(pointer p) {
 void scheme_setimmutable(pointer p) {
 	setimmutable(p);
 }
+
+void scheme_fill_vector(pointer vec, pointer obj) {
+	fill_vector(vec, obj);
+}
+
+pointer scheme_vector_elem(pointer vec, int ielem) {
+	return vector_elem(vec, ielem);
+}
+
+pointer scheme_set_vector_elem(pointer vec, int ielem, pointer a) {
+	return set_vector_elem(vec, ielem, a);
+}
+
+void scheme_memory_error(scheme *sc) {
+	sc->no_memory=1;
+}

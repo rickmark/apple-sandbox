@@ -19,7 +19,7 @@
 #define _CONFIG_H
 
 #if defined _WIN32 && !defined SCHEME_STATIC
-# ifdef _SCHEME_SOURCE
+# if defined _SCHEME_SOURCE || defined SCHEME_MODULE
 #  define SCHEME_EXPORT __declspec(dllexport)
 # else
 #  define SCHEME_EXPORT __declspec(dllimport)

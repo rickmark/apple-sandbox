@@ -5,9 +5,15 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# remove 'lib' prefix for dlls 
+if(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
+	set(CMAKE_SHARED_LIBRARY_PREFIX "")
+endif()
+
 # ----------------------------------------------------------------------------
 
 set (TINYSCHEME_DIR "src")
+set (RE_MODULE_DIR "src/re")
 
 # ----------------------------------------------------------------------------
 
@@ -49,3 +55,20 @@ set_target_properties (tinyscheme-app PROPERTIES OUTPUT_NAME tinyscheme)
 
 # ----------------------------------------------------------------------------
 
+set(RE_MODULE_SRCS
+	${RE_MODULE_DIR}/re.c 
+	${RE_MODULE_DIR}/debug.c 
+	${RE_MODULE_DIR}/regcomp.c 
+	${RE_MODULE_DIR}/regerror.c 
+	${RE_MODULE_DIR}/regexec.c 
+	${RE_MODULE_DIR}/regfree.c 
+	${RE_MODULE_DIR}/split.c
+)
+
+add_library(tinyscheme-re SHARED ${RE_MODULE_SRCS})
+target_link_libraries(tinyscheme-re tinyscheme)
+target_include_directories (tinyscheme-re PUBLIC ${TINYSCHEME_DIR} PUBLIC ${RE_MODULE_DIR})
+target_compile_definitions(tinyscheme-re PUBLIC ${TINYSCHEME_DEFS})
+set_target_properties (tinyscheme-re PROPERTIES OUTPUT_NAME re)
+
+# ----------------------------------------------------------------------------
