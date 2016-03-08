@@ -87,7 +87,6 @@ static char* utilities=";; return the substring of STRING matched in MATCH-VECTO
 "             (string-length string))))\n";
 
 SCHEME_EXPORT void init_re(scheme *sc) {
-  printf("RE: defining foreign function\n");
   scheme_define(sc, scheme_global_env(sc), scheme_symbol(sc, "re-match"), scheme_foreign_func(sc, foreign_re_match));
   // printf("RE: adding utility functions\n");
   // scheme_load_string(sc, utilities);
