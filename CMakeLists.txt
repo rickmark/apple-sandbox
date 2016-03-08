@@ -7,16 +7,17 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # ----------------------------------------------------------------------------
 
-set (TINYSCHEME_DIR "tinyscheme-1.41")
+set (TINYSCHEME_DIR "src")
 
 # ----------------------------------------------------------------------------
 
 set (TINYSCHEME_SRCS
 	${TINYSCHEME_DIR}/scheme.c
+	${TINYSCHEME_DIR}/api.c
 	${TINYSCHEME_DIR}/dynload.c
 )
 
-set(TINYSCHEME_MAIN_SRCS
+set(TINYSCHEME_APP_SRCS
 	${TINYSCHEME_DIR}/main.c
 )
 
@@ -41,7 +42,7 @@ endif(WIN32)
 add_library (tinyscheme SHARED ${TINYSCHEME_SRCS})
 target_compile_definitions(tinyscheme PUBLIC ${TINYSCHEME_DEFS})
 
-add_executable(tinyscheme-app ${TINYSCHEME_MAIN_SRCS})
+add_executable(tinyscheme-app ${TINYSCHEME_APP_SRCS})
 target_link_libraries(tinyscheme-app tinyscheme)
 target_compile_definitions(tinyscheme-app PUBLIC ${TINYSCHEME_DEFS})
 set_target_properties (tinyscheme-app PROPERTIES OUTPUT_NAME tinyscheme)

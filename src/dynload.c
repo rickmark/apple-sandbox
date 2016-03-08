@@ -5,6 +5,7 @@
 
 #define _SCHEME_SOURCE
 #include "dynload.h"
+#include "scheme-private.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

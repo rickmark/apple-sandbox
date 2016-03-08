@@ -1,5 +1,7 @@
-/* T I N Y S C H E M E    1 . 4 1
- *   Dimitrios Souflis (dsouflis@acm.org)
+/* T I N Y S C H E M E    1 . 50
+ *   Continued by armornick (March 2016)
+ *   Original work by Dimitrios Souflis (dsouflis@acm.org)
+ *   
  *   Based on MiniScheme (original credits follow)
  * (MINISCM)               coded by Atsushi Moriwaki (11/5/1989)
  * (MINISCM)           E-MAIL :  moriwaki@kurims.kurims.kyoto-u.ac.jp
@@ -10,7 +12,6 @@
  * (MINISCM) This is a revised and modified version by Akira KIDA.
  * (MINISCM)    current version is 0.85k4 (15 May 1994)
  * (MINISCM)
- * (MINISCM) Revised for cmake by armornick (November 2015)
  *
  */
 
@@ -365,8 +366,6 @@ static void printatom(scheme *sc, pointer l, int f);
 static pointer mk_proc(scheme *sc, enum scheme_opcodes op);
 static pointer mk_closure(scheme *sc, pointer c, pointer e);
 static pointer mk_continuation(scheme *sc, pointer d);
-static pointer reverse(scheme *sc, pointer a);
-static pointer reverse_in_place(scheme *sc, pointer term, pointer list);
 static pointer revappend(scheme *sc, pointer a, pointer b);
 static void dump_stack_mark(scheme *);
 static pointer opexe_0(scheme *sc, enum scheme_opcodes op);
@@ -2065,7 +2064,7 @@ static pointer list_star(scheme *sc, pointer d) {
 }
 
 /* reverse list -- produce new list */
-static pointer reverse(scheme *sc, pointer a) {
+pointer reverse(scheme *sc, pointer a) {
 /* a must be checked by gc */
      pointer p = sc->NIL;
 
@@ -2076,7 +2075,7 @@ static pointer reverse(scheme *sc, pointer a) {
 }
 
 /* reverse list --- in-place */
-static pointer reverse_in_place(scheme *sc, pointer term, pointer list) {
+pointer reverse_in_place(scheme *sc, pointer term, pointer list) {
      pointer p = list, result = term, q;
 
      while (p != sc->NIL) {
@@ -4875,28 +4874,6 @@ void scheme_define(scheme *sc, pointer envir, pointer symbol, pointer value) {
      }
 }
 
-int scheme_retcode(scheme *sc) {
-  return sc->retcode;
-}
-
-pointer scheme_global_env(scheme *sc) {
-  return sc->global_env;
-}
-
-pointer scheme_nil(scheme *sc) {
-  return sc->NIL;
-}
-
-pointer scheme_true(scheme *sc) {
-  return sc->T;
-}
-
-pointer scheme_false(scheme *sc) {
-  return sc->F;
-}
-
-
-
 void scheme_register_foreign_func(scheme * sc, scheme_registerable * sr)
 {
   scheme_define(sc,
@@ -4970,12 +4947,4 @@ pointer scheme_eval(scheme *sc, pointer obj)
   sc->interactive_repl = old_repl;
   restore_from_C_call(sc);
   return sc->value;
-}
-
-pointer scheme_reverse(scheme *sc, pointer a) {
-  return reverse(sc, a);
-}
-
-pointer scheme_reverse_in_place(scheme *sc, pointer term, pointer list) {
-  return reverse_in_place(sc, term, list);
 }

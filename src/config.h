@@ -1,7 +1,24 @@
+/* T I N Y S C H E M E    1 . 50
+ *   Continued by armornick (March 2016)
+ *   Original work by Dimitrios Souflis (dsouflis@acm.org)
+ *   
+ *   Based on MiniScheme (original credits follow)
+ * (MINISCM)               coded by Atsushi Moriwaki (11/5/1989)
+ * (MINISCM)           E-MAIL :  moriwaki@kurims.kurims.kyoto-u.ac.jp
+ * (MINISCM) This version has been modified by R.C. Secrist.
+ * (MINISCM)
+ * (MINISCM) Mini-Scheme is now maintained by Akira KIDA.
+ * (MINISCM)
+ * (MINISCM) This is a revised and modified version by Akira KIDA.
+ * (MINISCM)    current version is 0.85k4 (15 May 1994)
+ * (MINISCM)
+ *
+ */
+
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-#ifdef _WIN32
+#if defined _WIN32 && !defined SCHEME_STATIC
 # ifdef _SCHEME_SOURCE
 #  define SCHEME_EXPORT __declspec(dllexport)
 # else

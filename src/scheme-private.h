@@ -1,3 +1,20 @@
+/* T I N Y S C H E M E    1 . 50
+ *   Continued by armornick (March 2016)
+ *   Original work by Dimitrios Souflis (dsouflis@acm.org)
+ *   
+ *   Based on MiniScheme (original credits follow)
+ * (MINISCM)               coded by Atsushi Moriwaki (11/5/1989)
+ * (MINISCM)           E-MAIL :  moriwaki@kurims.kurims.kyoto-u.ac.jp
+ * (MINISCM) This version has been modified by R.C. Secrist.
+ * (MINISCM)
+ * (MINISCM) Mini-Scheme is now maintained by Akira KIDA.
+ * (MINISCM)
+ * (MINISCM) This is a revised and modified version by Akira KIDA.
+ * (MINISCM)    current version is 0.85k4 (15 May 1994)
+ * (MINISCM)
+ *
+ */
+
 /* scheme-private.h */
 
 #ifndef _SCHEME_PRIVATE_H
@@ -153,8 +170,20 @@ enum scheme_opcodes {
 };
 
 
-#define cons(sc,a,b) _cons(sc,a,b,0)
-#define immutable_cons(sc,a,b) _cons(sc,a,b,1)
+pointer _cons(scheme *sc, pointer a, pointer b, int immutable);
+pointer mk_integer(scheme *sc, long num);
+pointer mk_real(scheme *sc, double num);
+pointer mk_symbol(scheme *sc, const char *name);
+pointer gensym(scheme *sc);
+pointer mk_string(scheme *sc, const char *str);
+pointer mk_counted_string(scheme *sc, const char *str, int len);
+pointer mk_empty_string(scheme *sc, int len, char fill);
+pointer mk_character(scheme *sc, int c);
+pointer mk_foreign_func(scheme *sc, foreign_func f);
+void putstr(scheme *sc, const char *s);
+int list_length(scheme *sc, pointer a);
+int eqv(pointer a, pointer b);
+
 
 int is_string(pointer p);
 char *string_value(pointer p);
@@ -196,6 +225,11 @@ int is_promise(pointer p);
 int is_environment(pointer p);
 int is_immutable(pointer p);
 void setimmutable(pointer p);
+
+
+pointer reverse(scheme *sc, pointer a);
+pointer reverse_in_place(scheme *sc, pointer term, pointer list);
+
 
 #ifdef __cplusplus
 }

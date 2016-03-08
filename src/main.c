@@ -1,3 +1,20 @@
+/* T I N Y S C H E M E    1 . 50
+ *   Continued by armornick (March 2016)
+ *   Original work by Dimitrios Souflis (dsouflis@acm.org)
+ *   
+ *   Based on MiniScheme (original credits follow)
+ * (MINISCM)               coded by Atsushi Moriwaki (11/5/1989)
+ * (MINISCM)           E-MAIL :  moriwaki@kurims.kurims.kyoto-u.ac.jp
+ * (MINISCM) This version has been modified by R.C. Secrist.
+ * (MINISCM)
+ * (MINISCM) Mini-Scheme is now maintained by Akira KIDA.
+ * (MINISCM)
+ * (MINISCM) This is a revised and modified version by Akira KIDA.
+ * (MINISCM)    current version is 0.85k4 (15 May 1994)
+ * (MINISCM)
+ *
+ */
+
 #include "scheme.h"
 #include "dynload.h"
 
@@ -14,7 +31,7 @@
 #define snprintf _snprintf
 #endif
 
-#define banner "TinyScheme 1.41"
+#define banner "TinyScheme 1.50"
 
 #ifndef InitFile
 # define InitFile "init.scm"
@@ -57,20 +74,18 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  printf("initializing scheme environment\n");
+  // printf("initializing scheme environment\n");
   if(!scheme_init(&sc)) {
     fprintf(stderr,"Could not initialize!\n");
     return 2;
   }
 
-  printf("setting standard ports\n");
   scheme_set_input_port_file(sc, stdin);
-  printf("setting standard ports\n");
   scheme_set_output_port_file(sc, stdout);
 
 #if USE_DL
-  printf("defining extension loader\n");
-  scheme_define(sc,scheme_global_env(sc),mk_symbol(sc,"load-extension"),mk_foreign_func(sc, scm_load_ext));
+  // printf("defining extension loader\n");
+  scheme_define(sc,scheme_global_env(sc),scheme_symbol(sc,"load-extension"),scheme_foreign_func(sc, scm_load_ext));
 #endif
 
   argv++;
@@ -93,11 +108,11 @@ int main(int argc, char **argv) {
         fin=fopen(file_name,"r");
       }
       for(;*argv;argv++) {
-        pointer value=mk_string(sc,*argv);
+        pointer value=scheme_string(sc,*argv);
         args=cons(sc,value,args);
       }
       args=scheme_reverse_in_place(sc,scheme_nil(sc),args);
-      scheme_define(sc,scheme_global_env(sc),mk_symbol(sc,"*args*"),args);
+      scheme_define(sc,scheme_global_env(sc),scheme_symbol(sc,"*args*"),args);
 
     } else {
       fin=fopen(file_name,"r");
