@@ -1,6 +1,11 @@
-# TinyScheme
+# Apple Sandbox
 
-## Notes by armornick
+This is a combination of two other prior works, an updated FOSS tiny scheme (with rickmark's additions to support modern macOS X and Apple's regex literal format) and the contents of https://github.com/dionthegod/XNUSandbox which provided a number of useful tools related to sandbox (albeit out of date and therefore updated to support modern macOS by rickmark)
+
+
+## TinyScheme
+
+### Notes by armornick
 
 This is a sort-of continuation of the TinyScheme project, which seems to have been abandoned.
 
@@ -10,7 +15,7 @@ It started with just trying to get it to compile via CMake before deciding to se
 
 As a final note, I don't need any personal credits since I haven't actually written the original project source. Be sure to properly credit the original author, though.
 
-## Description by original author
+### Description by original author
 
 TinyScheme is a lightweight Scheme interpreter that implements as large a subset of R5RS as was possible without getting very large and complicated. It is meant to be used as an embedded scripting interpreter for other programs. As such, it does not offer IDEs or extensive toolkits although it does sport a small top-level loop, included conditionally. A lot of functionality in TinyScheme is included conditionally, to allow developers freedom in balancing features and footprint.
 
@@ -20,6 +25,6 @@ The TinyScheme project has slowly acquired foothold in many open-source projects
 
 There is an issue that is better put forth, rather than stashed under the carpet. The same qualities that have made TinyScheme suitable for many embedded or small-footprint jobs, have earned it an unwanted place in less desirable software. I hope it is clear that TinyScheme itself is domain-agnostic and I, in particular, am not a supporter of malware or adware.
 
-## Licensing
+# Licensing
 
 This software is open source, covered by a BSD-style license. See the LICENSE file in this directory for the full license terms.

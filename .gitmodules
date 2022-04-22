@@ -1,0 +1,3 @@
+[submodule "ext/xnu-sandbox"]
+	path = ext/xnu-sandbox
+	url = https://github.com/dionthegod/XNUSandbox

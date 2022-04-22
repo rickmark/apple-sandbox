@@ -114,3 +114,8 @@ install_manifest.txt
 
 # out-of-source build directories
 build-*/
+
+
+build/
+
+.DS_Store
